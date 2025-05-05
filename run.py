@@ -92,16 +92,24 @@ def handle_new_activity(activity_id):
         activities_resp.raise_for_status()
         activities = activities_resp.json()
 
+        # Filter for only Run and TrailRun activities
+        run_activities = [a for a in activities if a.get('type') in ['Run', 'TrailRun']]
+        print(f"Found {len(run_activities)} runs out of {len(activities)} total activities in last 7 days")
+
         # Calculate totals
-        total_distance = sum(a.get('distance', 0) for a in activities) / 1000
-        total_time = sum(a.get('moving_time', 0) for a in activities) / 60
-        total_elev = sum(a.get('total_elevation_gain', 0) for a in activities)
+        total_distance = sum(a.get('distance', 0) for a in run_activities) / 1000
+        total_time = sum(a.get('moving_time', 0) for a in run_activities)
+        total_elev = sum(a.get('total_elevation_gain', 0) for a in run_activities)
+
+        # Convert time to hours and minutes
+        hours = int(total_time_seconds // 3600)
+        minutes = int((total_time_seconds % 3600) // 60)
 
         # Build totals text
         totals_text = (
             f"7-day totals:\n"
             f"🏃 {total_distance:.2f} km\n"
-            f"⏱️ {total_time:.1f} min\n"
+            f"⏱️ {hours}h {minutes}m\n"
             f"⛰️ {total_elev:.1f} m"
         )
 
