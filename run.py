@@ -3,6 +3,12 @@ import requests
 import datetime
 import os
 import time
+try:
+    from dotenv import load_dotenv
+    load_dotenv()  # Load .env file if available
+except ImportError:
+    print("python-dotenv not installed, skipping .env loading")
+
 from token_manager import TokenManager
 
 app = Flask(__name__)
@@ -11,8 +17,13 @@ app = Flask(__name__)
 CLIENT_ID = os.getenv('STRAVA_CLIENT_ID')
 CLIENT_SECRET = os.getenv('STRAVA_CLIENT_SECRET')
 VERIFY_TOKEN = os.getenv('STRAVA_VERIFY_TOKEN')
-# Get your refresh token from Postman and set it as an environment variable in Render
 REFRESH_TOKEN = os.getenv('STRAVA_REFRESH_TOKEN')
+
+# Print environment variables for debugging (exclude sensitive info)
+print(f"STRAVA_CLIENT_ID set: {'Yes' if CLIENT_ID else 'No'}")
+print(f"STRAVA_CLIENT_SECRET set: {'Yes' if CLIENT_SECRET else 'No'}")
+print(f"STRAVA_REFRESH_TOKEN set: {'Yes' if REFRESH_TOKEN else 'No'}")
+print(f"STRAVA_VERIFY_TOKEN set: {'Yes' if VERIFY_TOKEN else 'No'}")
 
 # Initialize the token manager
 token_manager = TokenManager(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN)
@@ -90,7 +101,7 @@ def handle_new_activity(activity_id):
         totals_text = (
             f"7-day totals:\n"
             f"🏃 {total_distance:.2f} km\n"
-            f"⏱️ {int(total_time // 60)}h {int(total_time % 60)}m\n"
+            f"⏱️ {total_time:.1f} min\n"
             f"⛰️ {total_elev:.1f} m"
         )
 
@@ -124,4 +135,6 @@ def test_token():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.getenv('PORT', 8080)))
+    port = int(os.getenv('PORT', 8080))
+    print(f"Starting server on port {port}")
+    app.run(host='0.0.0.0', port=port)
