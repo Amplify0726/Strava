@@ -4,7 +4,7 @@ import os, requests, datetime
 # Define Blueprint
 webhook_bp = Blueprint('webhook', __name__)
 
-VERIFY_TOKEN = os.getenv('STRAVA_VERIFY_TOKEN', 'your-verify-token')
+VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 
 @webhook_bp.route('/webhook', methods=['GET', 'POST'])
 def strava_webhook():
