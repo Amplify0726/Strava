@@ -98,7 +98,7 @@ def handle_new_activity(activity_id):
 
         # Calculate totals
         total_distance = sum(a.get('distance', 0) for a in run_activities) / 1000
-        total_time = sum(a.get('moving_time', 0) for a in run_activities)
+        total_time_seconds = sum(a.get('moving_time', 0) for a in run_activities)
         total_elev = sum(a.get('total_elevation_gain', 0) for a in run_activities)
 
         # Convert time to hours and minutes
