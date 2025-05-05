@@ -91,9 +91,9 @@ def handle_new_activity(activity_id):
 
         # Build totals text
         totals_text = (
-            f"7-day totals:\n"
+            f"7-day rolling totals:\n"
             f"🏃 {total_distance:.2f} km\n"
-            f"⏱️ {total_time:.1f} min\n"
+            f"⏱️ {int(total_time // 60)}h {int(total_time % 60)}m\n"
             f"⛰️ {total_elev:.1f} m"
         )
 
