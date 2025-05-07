@@ -76,7 +76,7 @@ def handle_new_activity(activity_id):
         current_description = activity.get('description', '') or ''
 
         # Strip out any previous totals you may have added
-        separator = "\n\n7-day totals:"
+        separator = "\n\n7-day rolling totals:"
         if separator in current_description:
             current_description = current_description.split(separator)[0].strip()
 
