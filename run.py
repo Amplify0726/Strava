@@ -58,7 +58,7 @@ def strava_webhook():
             
         return '', 200
 
-def handle_new_activity(activity_id):
+def handle_new_activity(activity_id, retry_attempt=0, max_retries=3):
     try:
         print(f"Processing activity {activity_id}")
         # Get a fresh access token
@@ -75,10 +75,10 @@ def handle_new_activity(activity_id):
         # Get current description, handle None case
         current_description = activity.get('description', '') or ''
 
-        # Strip out any previous totals you may have added
-        separator = "\n\n7-day rolling totals:"
-        if separator in current_description:
-            current_description = current_description.split(separator)[0].strip()
+        # Check if totals already exist
+        if "7-day rolling totals:" in current_description:
+            print(f"Activity {activity_id} already has totals, skipping")
+            return True  # Return True to indicate successful handling
 
         # Get past 7 days of activities
         now = datetime.datetime.utcnow()
@@ -127,6 +127,13 @@ def handle_new_activity(activity_id):
         
     except Exception as e:
         print(f"Error handling activity {activity_id}: {e}")
+        if retry_attempt < max_retries - 1:
+            print(f"Retrying activity {activity_id} in 5 seconds... (attempt {retry_attempt + 2}/{max_retries})")
+            time.sleep(5)
+            return handle_new_activity(activity_id, retry_attempt=retry_attempt+1, max_retries=max_retries)
+        else:
+            print(f"Activity {activity_id} failed after {max_retries} attempts.")
+            return False
 
 @app.route('/test_token')
 def test_token():
