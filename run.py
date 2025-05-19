@@ -82,7 +82,7 @@ def handle_new_activity(activity_id, retry_attempt=0, max_retries=3):
 
         # Get past 7 days of activities
         today = datetime.datetime.utcnow().date()
-        start_date = today - datetime.timedelta(days=7)
+        start_date = today - datetime.timedelta(days=6)
         after = int(datetime.datetime.combine(start_date, datetime.time.min).timestamp())
         
         
