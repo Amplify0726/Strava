@@ -81,8 +81,10 @@ def handle_new_activity(activity_id, retry_attempt=0, max_retries=3):
             return True  # Return True to indicate successful handling
 
         # Get past 7 days of activities
-        now = datetime.datetime.utcnow()
-        after = int((now - datetime.timedelta(days=7)).timestamp())
+        today = datetime.datetime.utcnow().date()
+        start_date = today - datetime.timedelta(days=7)
+        after = int(datetime.datetime.combine(start_date, datetime.time.min).timestamp())
+        
         
         activities_resp = requests.get(
             "https://www.strava.com/api/v3/athlete/activities",
